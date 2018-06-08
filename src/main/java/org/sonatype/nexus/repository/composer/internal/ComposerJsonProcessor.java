@@ -79,34 +79,38 @@ public class ComposerJsonProcessor
 
   static {
     Map<String,String> package_json_keys_tmp = new HashMap<>();
-    package_json_keys_tmp.put("AUTOLOAD_KEY", "autoload");
-    package_json_keys_tmp.put("AUTHORS_KEY", "authos");
-    package_json_keys_tmp.put("BIN_KEY", "bin");
-    package_json_keys_tmp.put("CONFLICT_KEY", "conflict");
-    package_json_keys_tmp.put("DESCRIPTION_KEY", "description");
-    package_json_keys_tmp.put("DIST_KEY", "dist");
-    package_json_keys_tmp.put("EXTRA_KEY", "extra");
-    package_json_keys_tmp.put("KEYWORDS_KEY", "keywords");
-    package_json_keys_tmp.put("LICENSE_KEY", "license");
-    package_json_keys_tmp.put("NAME_KEY", "name");
+    package_json_keys_tmp.put("AUTOLOAD_KEY", "autoload"); //
+    package_json_keys_tmp.put("AUTOLOAD_DEV_KEY", "autoload-dev"); //
+    package_json_keys_tmp.put("AUTHORS_KEY", "authos"); //
+    package_json_keys_tmp.put("BIN_KEY", "bin"); //
+    package_json_keys_tmp.put("CONFLICT_KEY", "conflict"); //
+    package_json_keys_tmp.put("DESCRIPTION_KEY", "description"); //
+    package_json_keys_tmp.put("DIST_KEY", "dist"); //
+    package_json_keys_tmp.put("EXTRA_KEY", "extra"); //
+    package_json_keys_tmp.put("HOMPAGE_KEY", "homepage"); //
+    package_json_keys_tmp.put("KEYWORDS_KEY", "keywords"); //
+    package_json_keys_tmp.put("LICENSE_KEY", "license"); //
+    package_json_keys_tmp.put("NAME_KEY", "name"); //
+    package_json_keys_tmp.put("PROVIDERS_KEY", "providers"); //
+    package_json_keys_tmp.put("REQUIRE_KEY", "require"); //
+    package_json_keys_tmp.put("REQUIRE_DEV_KEY", "require-dev"); //
+    package_json_keys_tmp.put("SCRIPTS_KEY", "scripts"); //
+    package_json_keys_tmp.put("SUGGEST_KEY", "suggest"); //
+    package_json_keys_tmp.put("SUPPORT_KEY", "support"); //
+    package_json_keys_tmp.put("TARGET_DIR_KEY", "target-dir"); //
+    package_json_keys_tmp.put("TIME_KEY", "time"); //
+    package_json_keys_tmp.put("UID_KEY", "uid"); //
+    package_json_keys_tmp.put("VERSION_KEY", "version"); //
     package_json_keys_tmp.put("PACKAGES_KEY", "packages");
     package_json_keys_tmp.put("PACKAGE_NAMES_KEY", "packageNames");
     package_json_keys_tmp.put("PROVIDE_KEY", "provide");
-    package_json_keys_tmp.put("PROVIDERS_KEY", "providers");
     package_json_keys_tmp.put("PROVIDERS_URL_KEY", "providers-url");
     package_json_keys_tmp.put("REFERENCE_KEY", "reference");
-    package_json_keys_tmp.put("REQUIRE_KEY", "require");
-    package_json_keys_tmp.put("REQUIRE_DEV_KEY", "require-dev");
     package_json_keys_tmp.put("SHA256_KEY", "sha256");
     package_json_keys_tmp.put("SHASUM_KEY", "shasum");
     package_json_keys_tmp.put("SOURCE_KEY", "source");
-    package_json_keys_tmp.put("SUGGEST_KEY", "suggest");
-    package_json_keys_tmp.put("TARGET_DIR_KEY", "target-dir");
-    package_json_keys_tmp.put("TIME_KEY", "time");
     package_json_keys_tmp.put("TYPE_KEY", "type");
-    package_json_keys_tmp.put("UID_KEY", "uid");
     package_json_keys_tmp.put("URL_KEY", "url");
-    package_json_keys_tmp.put("VERSION_KEY", "version");
     PACKAGE_JSON_KEYS = Collections.unmodifiableMap(package_json_keys_tmp);
   }
 
@@ -257,7 +261,7 @@ public class ComposerJsonProcessor
               packages.put(packageName, new LinkedHashMap<>());
             }
 
-            String time = (String) versionInfo.get(TIME_KEY);
+            String time = (String) versionInfo.get(PACKAGE_JSON_KEYS.get("TIME_KEY"));
             if (time == null) {
               time = currentTime;
             }
@@ -285,21 +289,33 @@ public class ComposerJsonProcessor
                                                final Map<String, Object> versionInfo)
   {
     Map<String, Object> newPackageInfo = new LinkedHashMap<>();
-    newPackageInfo.put(PACKAGE_JSON_KEYS.get("NAME_KEY"), packageName);
-    newPackageInfo.put(PACKAGE_JSON_KEYS.get("VERSION_KEY"), packageVersion);
-    newPackageInfo.put(PACKAGE_JSON_KEYS.get("DIST_KEY"), buildDistInfo(repository, packageName, packageVersion, reference, shasum, type));
-    newPackageInfo.put(PACKAGE_JSON_KEYS.get("TIME_KEY"), time);
-    newPackageInfo.put(PACKAGE_JSON_KEYS.get("UID_KEY"), Integer.toUnsignedLong(
-        Hashing.md5().newHasher()
-            .putString(packageName, StandardCharsets.UTF_8)
-            .putString(packageVersion, StandardCharsets.UTF_8)
-            .putString(time, StandardCharsets.UTF_8)
-            .hash()
-            .asInt()));
 
     for (String KEY : PACKAGE_JSON_KEYS.values()) {
-      if(versionInfo.containsKey(KEY)) {
-        newPackageInfo.put(KEY, versionInfo.get(KEY));
+      switch (KEY) {
+        case "name":
+          newPackageInfo.put(PACKAGE_JSON_KEYS.get("NAME_KEY"), packageName);
+          break;
+        case "version":
+          newPackageInfo.put(PACKAGE_JSON_KEYS.get("VERSION_KEY"), packageVersion);
+          break;
+        case "time":
+          newPackageInfo.put(PACKAGE_JSON_KEYS.get("TIME_KEY"), time);
+          break;
+        case "dist":
+          newPackageInfo.put(PACKAGE_JSON_KEYS.get("DIST_KEY"), buildDistInfo(repository, packageName, packageVersion, reference, shasum, type));
+          break;
+        case "uid":
+          newPackageInfo.put(PACKAGE_JSON_KEYS.get("UID_KEY"), Integer.toUnsignedLong(
+            Hashing.md5().newHasher()
+              .putString(packageName, StandardCharsets.UTF_8)
+              .putString(packageVersion, StandardCharsets.UTF_8)
+              .putString(time, StandardCharsets.UTF_8)
+              .hash()
+              .asInt()));
+        default:
+          if(versionInfo.containsKey(KEY)) {
+            newPackageInfo.put(KEY, versionInfo.get(KEY));
+          }
       }
     }
     if (versionInfo.containsKey(TYPE_KEY)) {
