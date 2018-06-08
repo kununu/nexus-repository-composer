@@ -167,7 +167,7 @@ public class ComposerJsonProcessor
           if (distInfo != null && ZIP_TYPE.equals(distInfo.get(PACKAGE_JSON_KEYS.get("TYPE_KEY")))) {
             versionInfo.put(PACKAGE_JSON_KEYS.get("DIST_KEY"),
                 buildDistInfo(repository, packageName, packageVersion, (String) distInfo.get(PACKAGE_JSON_KEYS.get("REFERENCE_KEY")),
-                    (String) distInfo.get(PACKAGE_JSON_KEYS.get("SHASUM_KEY_KEY")), ZIP_TYPE));
+                    (String) distInfo.get(PACKAGE_JSON_KEYS.get("SHASUM_KEY")), ZIP_TYPE));
           }
         }
       }
@@ -264,7 +264,7 @@ public class ComposerJsonProcessor
 
             Map<String, Object> packagesForName = packages.get(packageName);
             packagesForName.putIfAbsent(packageVersion, buildPackageInfo(repository, packageName, packageVersion,
-                (String) distInfo.get(PACKAGE_JSON_KEYS.get("REFERENCE_KEY")), (String) distInfo.get(PACKAGE_JSON_KEYS.get("SHASUM_KEY_KEY")),
+                (String) distInfo.get(PACKAGE_JSON_KEYS.get("REFERENCE_KEY")), (String) distInfo.get(PACKAGE_JSON_KEYS.get("SHASUM_KEY")),
                 (String) distInfo.get(PACKAGE_JSON_KEYS.get("TYPE_KEY")), time, versionInfo));
           }
         }
@@ -321,7 +321,7 @@ public class ComposerJsonProcessor
         .put(PACKAGE_JSON_KEYS.get("URL_KEY"), repository.getUrl() + "/" + buildZipballPath(packageVendor, packageProject, packageVersion));
     newDistInfo.put(PACKAGE_JSON_KEYS.get("TYPE_KEY"), type);
     newDistInfo.put(PACKAGE_JSON_KEYS.get("REFERENCE_KEY"), reference);
-    newDistInfo.put(PACKAGE_JSON_KEYS.get("SHASUM_KEY_KEY"), shasum);
+    newDistInfo.put(PACKAGE_JSON_KEYS.get("SHASUM_KEY"), shasum);
     return newDistInfo;
   }
 
